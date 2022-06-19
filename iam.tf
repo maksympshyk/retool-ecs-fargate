@@ -39,6 +39,15 @@ resource "aws_iam_policy" "retool" {
         "${aws_secretsmanager_secret.encryption_key.arn}"
       ],
       "Effect": "Allow"
+    }, {
+      "Action": [
+        "ssmmessages:CreateControlChannel",
+        "ssmmessages:CreateDataChannel",
+        "ssmmessages:OpenControlChannel",
+        "ssmmessages:OpenDataChannel"
+      ],
+      "Resource": ["*"],
+      "Effect": "Allow"
     }
   ]
 }

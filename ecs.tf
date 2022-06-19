@@ -11,9 +11,10 @@ resource "aws_ecs_task_definition" "retool_main" {
   family                   = "retool"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
+  task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
-  cpu                      = "256"
-  memory                   = "512"
+  cpu                      = "1024"
+  memory                   = "2048"
   container_definitions = jsonencode(
     [
       {
@@ -48,7 +49,7 @@ resource "aws_ecs_task_definition" "retool_main" {
           interval    = 10
           timeout     = 5
           retries     = 3
-          startPeriod = 3
+          startPeriod = 10
         }
 
         environment = concat(
@@ -57,10 +58,6 @@ resource "aws_ecs_task_definition" "retool_main" {
             {
               name  = "SERVICE_TYPE"
               value = "MAIN_BACKEND,DB_CONNECTOR"
-            },
-            {
-              "name"  = "COOKIE_INSECURE",
-              "value" = "false"
             }
           ]
         )
@@ -94,6 +91,7 @@ resource "aws_ecs_task_definition" "retool_jobs_runner" {
   family                   = var.deployment_name
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
+  task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   cpu                      = "256"
   memory                   = "512"
