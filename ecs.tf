@@ -43,7 +43,7 @@ resource "aws_ecs_task_definition" "retool_main" {
         healthCheck = {
           command = [
             "CMD-SHELL",
-            "curl -f http://127.0.0.1:3000/api/healthCheck || exit 1"
+            "curl -f http://127.0.0.1:3000/api/checkHealth || exit 1"
           ],
           interval    = 10
           timeout     = 5
