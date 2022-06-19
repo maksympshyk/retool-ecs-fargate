@@ -1,2 +1,2 @@
-# retool-terraform-ecs-fargate
+# terraform-retool-ecs-fargate
 
