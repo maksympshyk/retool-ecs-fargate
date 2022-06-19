@@ -8,7 +8,7 @@ resource "aws_ecs_cluster" "retool" {
 }
 
 resource "aws_ecs_task_definition" "retool_main" {
-  family                   = "retool"
+  family                   = "${var.deployment_name}-main"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
@@ -41,17 +41,6 @@ resource "aws_ecs_task_definition" "retool_main" {
           }
         ]
 
-        healthCheck = {
-          command = [
-            "CMD-SHELL",
-            "curl -f http://127.0.0.1:3000/api/checkHealth || exit 1"
-          ],
-          interval    = 10
-          timeout     = 5
-          retries     = 3
-          startPeriod = 10
-        }
-
         environment = concat(
           local.environment_variables,
           [
@@ -74,6 +63,8 @@ resource "aws_ecs_service" "retool_main" {
   launch_type      = "FARGATE"
   platform_version = "1.4.0"
 
+  health_check_grace_period_seconds = 10
+
   network_configuration {
     assign_public_ip = false
     security_groups  = [aws_security_group.retool.id]
@@ -88,7 +79,7 @@ resource "aws_ecs_service" "retool_main" {
 }
 
 resource "aws_ecs_task_definition" "retool_jobs_runner" {
-  family                   = var.deployment_name
+  family                   = "${var.deployment_name}-jobs-runner"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
